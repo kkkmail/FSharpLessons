@@ -3,10 +3,13 @@ open System
 
 module Lessons =
 
+    let readInt() = Console.ReadLine() |> Int32.Parse
+    let readInt64() = Console.ReadLine() |> Int64.Parse
+
     /// Tournament
     let lesson1 () =
-        let n = Console.ReadLine() |> Int32.Parse
-        let results = [ for _ in 1..(n - 1) -> Console.ReadLine() |> Int32.Parse ]
+        let n = readInt()
+        let results = [ for _ in 1..(n - 1) -> readInt() ]
         let teams = [ for i in 1..n -> i ]
 
         let getWinner (p, r) =
@@ -55,9 +58,55 @@ module Lessons =
 
         0
 
+
+    /// Tiles
+    let lesson2 () =
+        let m = readInt()
+        let w = readInt()
+        let h = readInt()
+
+        let countTiles x =
+            match x % m with
+            | 0 -> (x / m) + 1
+            | _ -> (x / m) + 2
+
+        let r = (countTiles h) * (countTiles w)
+        printfn "Max number of tiles: %A" r
+
+        0
+
+
+    /// Elevator
+    let lesson3() =
+        let n = readInt64()
+        let a = readInt64()
+        let b = readInt64()
+        let c = readInt64()
+
+        let x = (a * n + b) / (a + b)
+
+        let getMinTime f =
+            let d = c * f + b * (f - 1L)
+            let u = c * f + a * (n - f)
+            max d u
+
+        let r =
+            [ x; x + 1L ]
+            |> List.map(fun e -> e, getMinTime e)
+            |> List.sortBy snd
+            |> List.head
+            |> fst
+
+        printfn "Floor: %A" (int r)
+
+        0
+
+
     let lessons =
         [
             "Tournament", lesson1
+            "Tiles", lesson2
+            "Elevator", lesson3
         ]
         |> List.mapi (fun i (s, f) -> i + 1, s, f)
 

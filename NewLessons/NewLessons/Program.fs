@@ -1,4 +1,5 @@
-﻿open NewLessons.Lessons
+﻿open System
+open NewLessons.Lessons
 
 [<EntryPoint>]
 let main argv =
@@ -8,7 +9,11 @@ let main argv =
     |> List.map (fun (i, s, f) -> printfn "Lesson number: %A - %A" i s)
     |> ignore
 
-    let (a, b, c) = lessons.[0]
+    printfn "Input lesson number:"
+    let n = readInt()
+
+    let (a, b, c) = lessons.[n - 1]
     c() |> ignore
+    Console.ReadLine() |> ignore
 
     0 // return an integer exit code

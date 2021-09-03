@@ -12,6 +12,8 @@
     <Compile Include="Olymp_04.fs" />
     <Compile Include="TransportingArtifacts.fs" />
     <Compile Include="Square.fs" />
+    <Compile Include="MaxWidth.fs" />
+    <Compile Include="SpeedTransport.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

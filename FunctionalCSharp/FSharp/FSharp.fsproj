@@ -6,12 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="DataTransformations.fs" />
+    <Compile Include="Primitives.fs" />
+    <Compile Include="BusinessEntities.fs" />
+    <Compile Include="Proxies.fs" />
+    <Compile Include="BusinessLogic.fs" />
+    <Compile Include="DbData.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="SQLProvider" Version="1.2.10" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
   </ItemGroup>
 
 </Project>

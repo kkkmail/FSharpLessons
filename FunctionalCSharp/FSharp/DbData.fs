@@ -117,8 +117,73 @@ module DbData =
         tryDbFun g
 
 
+    let private deleteEmployeeData c (EmployeeId i) =
+        let g() =
+            let ctx = getContext c
+
+            query {
+                for e in ctx.Dbo.EmployeeData do
+                where (e.EmployeeId = i)
+            }
+            |> Seq.``delete all items from single table``
+            |> Async.RunSynchronously
+            |> Ok
+
+        tryDbFun g
+
+
+    let private saveEmployeeData c (EmployeeId i) (d : EmployeeData) =
+        let g() =
+            let ctx = getContext c
+
+            let x =
+                query {
+                    for e in ctx.Dbo.EmployeeData do
+                    where (e.EmployeeDataTypeId = d.employeeDataType.id)
+                    select (Some e)
+                    exactlyOneOrDefault
+                }
+
+            match x with
+            | Some v ->
+                v.EmployeeDataValue <- d.emploeeDataValue
+                ctx.SubmitUpdates()
+            | None ->
+                let t =
+                    query {
+                        for e in ctx.Dbo.EmployeeDataType do
+                        where (e.EmployeeDataTypeId = d.employeeDataType.id)
+                        select (Some e)
+                        exactlyOneOrDefault
+                    }
+
+                match t with
+                | None ->
+                    let dt = ctx.Dbo.EmployeeDataType.``Create(EmployeeDataTypeId, EmployeeDataTypeName)``(
+                        EmployeeDataTypeId = d.employeeDataType.id,
+                        EmployeeDataTypeName = d.employeeDataType.name)
+
+                    ctx.SubmitUpdates()
+                | Some _ -> ()
+
+                let employeeData = ctx.Dbo.EmployeeData.``Create(EmployeeDataTypeId, EmployeeId)``(
+                    EmployeeDataTypeId = d.employeeDataType.id,
+                    EmployeeId = i)
+
+                employeeData.EmployeeDataValue <- d.emploeeDataValue
+                ctx.SubmitUpdates()
+            |> Ok
+
+        tryDbFun g
+
+
     let private saveEmployee c e =
         let g() =
+            let logIfErr r =
+                match r with
+                | Error e -> printfn $"Error: '%A{e}'."
+                | Ok _ -> ()
+
             let ctx = getContext c
 
             let x =
@@ -129,6 +194,17 @@ module DbData =
                     exactlyOneOrDefault
                 }
 
+            let updateData i =
+                deleteEmployeeData c i
+                |> logIfErr
+
+                e.data
+                |> Map.values
+                |> List.ofSeq
+                |> List.map (saveEmployeeData c i)
+                |> List.map logIfErr
+                |> ignore
+
             match x with
             | Some v ->
                 v.EmployeeName <- e.employeeName.value
@@ -137,8 +213,9 @@ module DbData =
                 v.DateHired <- e.dateHired
                 v.Salary <- e.salary
                 v.Description <- e.description
-                ctx.SubmitUpdates()
 
+                ctx.SubmitUpdates()
+                updateData e.employeeId
                 loadEmployee c e.employeeId
             | None ->
                 let employee = ctx.Dbo.Employee.Create(
@@ -153,7 +230,9 @@ module DbData =
                 employee.EmployeeName <- e.employeeName.value
 
                 ctx.SubmitUpdates()
-                loadEmployee c (EmployeeId employee.EmployeeId)
+                let i = EmployeeId employee.EmployeeId
+                updateData i
+                loadEmployee c i
 
         tryDbFun g
 

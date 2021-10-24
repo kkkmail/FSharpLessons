@@ -79,6 +79,8 @@ module Primitives =
         | HighSchoolMascot
         | PetName
 
+        member t.name = $"%A{t}"
+
         member t.id =
             match t with
             | FavoriteRestaurant -> 1L

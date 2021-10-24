@@ -1,6 +1,7 @@
 ﻿namespace FSharp.Lessons
 open System
 open FSharp.Data.Sql
+open FSharp.Data.Sql.Transactions
 
 open Primitives
 open BusinessEntities
@@ -20,7 +21,12 @@ module DbData =
 
 
     type private Database = SqlDataProvider<Common.DatabaseProviderTypes.MSSQLSERVER, DbConnectionString, UseOptionTypes = true>
+    type private DatabaseContext = Database.dataContext
     let private getContext (c : unit -> ConnectionString) = c().value |> Database.GetDataContext
+
+    let private getContext2 (c : unit -> ConnectionString) =
+        Database.GetDataContext(c().value, { Timeout = TimeSpan.FromSeconds(60); IsolationLevel = IsolationLevel.Chaos })
+
     let private mapExceptionToError e = $"Exception: '%A{e}'." |> DatabaseError |> Error
 
 
@@ -117,10 +123,8 @@ module DbData =
         tryDbFun g
 
 
-    let private deleteEmployeeData c (EmployeeId i) =
+    let private deleteEmployeeData (ctx : DatabaseContext) (EmployeeId i) =
         let g() =
-            let ctx = getContext c
-
             query {
                 for e in ctx.Dbo.EmployeeData do
                 where (e.EmployeeId = i)
@@ -131,11 +135,11 @@ module DbData =
 
         tryDbFun g
 
+    //let mutable private failUpdateEmployeeData = false
 
-    let private saveEmployeeData c (EmployeeId i) (d : EmployeeData) =
+
+    let private saveEmployeeData (ctx : DatabaseContext) (EmployeeId i) (d : EmployeeData) =
         let g() =
-            let ctx = getContext c
-
             let x =
                 query {
                     for e in ctx.Dbo.EmployeeData do
@@ -149,6 +153,9 @@ module DbData =
                 v.EmployeeDataValue <- d.emploeeDataValue
                 ctx.SubmitUpdates()
             | None ->
+                //if failUpdateEmployeeData
+                //then failwith "Simulating database error in the middle of lengthy update."
+
                 let t =
                     query {
                         for e in ctx.Dbo.EmployeeDataType do
@@ -181,7 +188,9 @@ module DbData =
         let g() =
             let logIfErr r =
                 match r with
-                | Error e -> printfn $"Error: '%A{e}'."
+                | Error e ->
+                    printfn $"Error: '%A{e}'."
+                    //failwith $"%A{e}"
                 | Ok _ -> ()
 
             let ctx = getContext c
@@ -195,18 +204,20 @@ module DbData =
                 }
 
             let updateData i =
-                deleteEmployeeData c i
+                deleteEmployeeData ctx i
                 |> logIfErr
 
                 e.data
                 |> Map.values
                 |> List.ofSeq
-                |> List.map (saveEmployeeData c i)
+                |> List.map (saveEmployeeData ctx i)
                 |> List.map logIfErr
                 |> ignore
 
             match x with
             | Some v ->
+                //failUpdateEmployeeData <- not failUpdateEmployeeData
+
                 v.EmployeeName <- e.employeeName.value
                 v.EmployeeEmail <- e.employeeEmail.value
                 v.ManagedByEmployeeId <- e.managedBy |> Option.map (fun a -> a.value)
@@ -214,8 +225,9 @@ module DbData =
                 v.Salary <- e.salary
                 v.Description <- e.description
 
-                ctx.SubmitUpdates()
                 updateData e.employeeId
+                ctx.SubmitUpdates()
+
                 loadEmployee c e.employeeId
             | None ->
                 let employee = ctx.Dbo.Employee.Create(
@@ -232,6 +244,8 @@ module DbData =
                 ctx.SubmitUpdates()
                 let i = EmployeeId employee.EmployeeId
                 updateData i
+                ctx.SubmitUpdates()
+
                 loadEmployee c i
 
         tryDbFun g

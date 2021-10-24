@@ -6,6 +6,10 @@ open FSharp.Lessons.Proxies
 open FSharp.Lessons.BusinessLogic
 open FSharp.Lessons.DbData
 
+let name = EmployeeName "John Smith"
+let newName = EmployeeName "John Smith Jr"
+let anotherNewName = EmployeeName "John Smith Sr"
+
 let proxy = EmployeeProxy.create ConnectionString.defaultValue
 let email = EmployeeEmail (Email "John.Smith@nowhere.gg")
 let wrongEmail = EmployeeEmail (Email "Joohn.Smith@nowhere.gg")
@@ -31,7 +35,7 @@ let restaurant =
 let employee =
     {
         employeeId = EmployeeId 0L
-        employeeName = EmployeeName "John Smith"
+        employeeName = name
         employeeEmail = email
         managedBy = None
         dateHired = DateTime.Now
@@ -56,7 +60,7 @@ Console.ReadLine() |> ignore
 match result2 with
 | Ok r ->
     printfn $"Trying to remove data with type: {pet.employeeDataType}."
-    let r1 = { r with data = r.data |> Map.remove pet.employeeDataType }
+    let r1 = { r with employeeName = newName; data = r.data |> Map.remove pet.employeeDataType }
     let r2 = proxy.saveEmployee r1
     printfn $"Result: %A{r2}\n\n"
     Console.ReadLine() |> ignore
@@ -64,7 +68,7 @@ match result2 with
     match r2 with
     | Ok r ->
         printfn $"Trying to add data with type: {restaurant.employeeDataType}."
-        let r1 = { r with data = r.data |> Map.add restaurant.employeeDataType restaurant }
+        let r1 = { r with employeeName = anotherNewName; data = r.data |> Map.add restaurant.employeeDataType restaurant }
         let r2 = proxy.saveEmployee r1
         printfn $"Result: %A{r2}\n\n"
         Console.ReadLine() |> ignore

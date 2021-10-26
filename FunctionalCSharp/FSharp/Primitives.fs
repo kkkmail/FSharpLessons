@@ -39,6 +39,7 @@ module Primitives =
     type ResultData<'T> = Result<'T, ErrorData>
     type UnitResult = ResultData<unit>
     type ListResult<'T> = List<ResultData<'T>>
+    type ResultList<'T> = ResultData<List<'T>>
 
 
     type EmployeeId =

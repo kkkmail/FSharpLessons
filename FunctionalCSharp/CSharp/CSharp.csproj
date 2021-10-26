@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,5 +8,9 @@
     <RootNamespace>CSharp.Lessons</RootNamespace>
     <AssemblyName>CSharp.Lessons</AssemblyName>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LaYumba.Functional" Version="0.10.0" />
+  </ItemGroup>
 
 </Project>

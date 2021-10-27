@@ -1,15 +1,19 @@
-﻿namespace CSharp.Lessons.Functional;
+﻿namespace CSharp.Lessons.Functional.Validation;
 
-public abstract record ValidationRuleList<T, TError, TRule>
-    where TRule : ValidationRule<T, TError>
+public abstract record AggregateValidationRule<T, TValue, TError> : ValidationRule<T, TValue, TError>
+    where T : SetBase<T, TValue, TError>
+    where TValue : IComparable<TValue>
 {
     private ImmutableList<TRule> NonAggregatableRules { get; }
     private ImmutableList<TRule> AggregatableRules { get; }
     private Func<TError, TError, TError> CombineErrors { get; }
 
-    public ValidationRuleList(
+    public AggregateValidationRule(
         IEnumerable<TRule> rules,
-        Func<TError, TError, TError> combineErrors)
+        Func<TError, TError, TError> combineErrors) : base(
+            IsValid: null!,
+            GetError: null!,
+            false)
     {
         var (t, f) = rules.Partition(e => e.CanAggregate);
         AggregatableRules = t.ToImmutableList();

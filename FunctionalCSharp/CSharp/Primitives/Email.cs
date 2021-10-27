@@ -1,7 +1,7 @@
 ﻿namespace CSharp.Lessons.Primitives;
 
-public abstract record EmailBase<T> : OpenSetBase<T, string>
-    where T : OpenSetBase<T, string>
+public abstract record EmailBase<T> : OpenSetBase<T, string, ErrorData>
+    where T : OpenSetBase<T, string, ErrorData>
 {
     protected EmailBase(string value) : base(value)
     {
@@ -24,5 +24,5 @@ public abstract record EmailBase<T> : OpenSetBase<T, string>
         TryCreate(
             email,
             e => creator(e),
-            Validator.Compose(r => r.Bind(validator ?? NoValidation<ErrorData>())));
+            Validator.Compose(r => r.Bind(validator ?? NoValidation())));
 }

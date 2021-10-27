@@ -2,4 +2,5 @@
 
 public record ErrorData(string ErrorMessage)
 {
+    //public static Func<T>
 }

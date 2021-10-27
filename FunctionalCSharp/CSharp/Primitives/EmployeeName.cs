@@ -1,6 +1,6 @@
 ﻿namespace CSharp.Lessons.Primitives;
 
-public record EmployeeName : OpenSetBase<EmployeeName, string>
+public record EmployeeName : OpenSetBase<EmployeeName, string, ErrorData>
 {
     private EmployeeName(string value) : base(value)
     {
@@ -15,5 +15,6 @@ public record EmployeeName : OpenSetBase<EmployeeName, string>
         TryCreate(
             name,
             n => new EmployeeName(n),
-            Validator.Compose(r => r.Bind(validator ?? NoValidation<ErrorData>())));
+            n => null,
+            Validator.Compose(r => r.Bind(validator ?? NoValidation())));
 }

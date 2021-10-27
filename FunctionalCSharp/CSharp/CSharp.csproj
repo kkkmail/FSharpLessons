@@ -10,8 +10,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Functional\Validation\AggregateValidationRule.cs" />
+    <Compile Remove="Functional\Validation\ValidationProcessor.cs" />
+    <Compile Remove="Primitives\Validators\EmailShouldHaveOneAtValidator.cs" />
+    <Compile Remove="Primitives\Validators\EmailShouldNotBeEmptyValidator.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="LaYumba.Functional" Version="0.10.0" />
     <PackageReference Include="morelinq" Version="3.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Primitives\Validators\" />
   </ItemGroup>
 
 </Project>

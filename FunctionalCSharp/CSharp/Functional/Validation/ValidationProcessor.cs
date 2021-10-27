@@ -1,4 +1,4 @@
-﻿namespace CSharp.Lessons.Functional;
+﻿namespace CSharp.Lessons.Functional.Validation;
 
 public class ValidationProcessor
 {

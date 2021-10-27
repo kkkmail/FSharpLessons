@@ -7,6 +7,7 @@
         public static Result.Ok<TResult> Ok<TResult>(TResult result) => new Result.Ok<TResult>(result);
         public static Result.Error<TError> Error<TError>(TError error) => new Result.Error<TError>(error);
         public static Unit Unit { get; } = new Unit();
+        public static Result.Ok<Unit> Ok() => new Result.Ok<Unit>(Unit);
     }
 
     public record struct Result<TResult, TError>

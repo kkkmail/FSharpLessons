@@ -8,7 +8,7 @@
     {
         public TValue Value { get; }
         protected SetBase(TValue value) => Value = value;
-        private static Func<TValue, Result<Unit, TError>> NoValidation<TError>() => _ => Ok(Unit);
+        private static Func<TValue, Result<Unit, TError>> NoValidation<TError>() => _ => Ok();
 
         protected static Result<T, TError> TryCreate<TError>(
             TValue value,

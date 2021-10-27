@@ -8,9 +8,9 @@
         {
         }
 
-        private static Func<string, Result<Unit, ErrorData>> EmployeeNameValidator { get; } = _ => Ok(Unit);
+        private static Func<string, Result<Unit, ErrorData>> Validator { get; } = _ => Ok();
 
         public static Result<EmployeeName, ErrorData> TryCreate(string name, Func<string, Result<Unit, ErrorData>>? yourOwnValidator = null) =>
-            TryCreate(name, n => new EmployeeName(n), yourOwnValidator ?? EmployeeNameValidator);
+            TryCreate(name, n => new EmployeeName(n), yourOwnValidator ?? Validator);
     }
 }

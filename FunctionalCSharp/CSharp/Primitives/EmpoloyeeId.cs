@@ -1,9 +1,8 @@
-﻿namespace CSharp.Lessons.Primitives
+﻿namespace CSharp.Lessons.Primitives;
+
+public record EmpoloyeeId : OpenSetBase<EmpoloyeeId, long>
 {
-    public record EmpoloyeeId : OpenSetBase<EmpoloyeeId, long>
+    public EmpoloyeeId(long value) : base(value)
     {
-        public EmpoloyeeId(long value) : base(value)
-        {
-        }
     }
 }

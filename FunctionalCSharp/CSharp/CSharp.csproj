@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="LaYumba.Functional" Version="0.10.0" />
+    <PackageReference Include="morelinq" Version="3.3.2" />
   </ItemGroup>
 
 </Project>

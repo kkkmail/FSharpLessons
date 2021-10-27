@@ -1,16 +1,19 @@
-﻿namespace CSharp.Lessons.Primitives
+﻿namespace CSharp.Lessons.Primitives;
+
+public record EmployeeName : OpenSetBase<EmployeeName, string>
 {
-    using static F;
-
-    public record EmployeeName : OpenSetBase<EmployeeName, string>
+    private EmployeeName(string value) : base(value)
     {
-        private EmployeeName(string value) : base(value)
-        {
-        }
-
-        private static Func<string, Result<Unit, ErrorData>> Validator { get; } = _ => Ok();
-
-        public static Result<EmployeeName, ErrorData> TryCreate(string name, Func<string, Result<Unit, ErrorData>>? yourOwnValidator = null) =>
-            TryCreate(name, n => new EmployeeName(n), yourOwnValidator ?? Validator);
     }
+
+    public static Func<string, Result<string, ErrorData>> Validator { get; } =
+        v => Ok(v.ToUpper().Trim());
+
+    public static Result<EmployeeName, ErrorData> TryCreate(
+        string name,
+        Func<string, Result<string, ErrorData>>? validator = null) =>
+        TryCreate(
+            name,
+            n => new EmployeeName(n),
+            Validator.Compose(r => r.Bind(validator ?? NoValidation<ErrorData>())));
 }

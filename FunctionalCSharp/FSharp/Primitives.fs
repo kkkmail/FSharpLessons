@@ -1,5 +1,4 @@
 ﻿namespace FSharp.Lessons
-open System
 open Microsoft.FSharp.Reflection
 
 module Primitives =

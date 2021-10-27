@@ -1,19 +1,16 @@
-﻿namespace CSharp.Lessons.Functional
+﻿namespace CSharp.Lessons.Functional;
+
+public record SetBase<T, TValue>
+    where T : SetBase<T, TValue>
+    where TValue : IComparable<TValue>
 {
-    using static F;
+    public TValue Value { get; }
+    protected SetBase(TValue value) => Value = value;
+    public static Func<TValue, Result<TValue, TError>> NoValidation<TError>() => v => Ok(v);
 
-    public record SetBase<T, TValue>
-        where T : SetBase<T, TValue>
-        where TValue : IComparable<TValue>
-    {
-        public TValue Value { get; }
-        protected SetBase(TValue value) => Value = value;
-        private static Func<TValue, Result<Unit, TError>> NoValidation<TError>() => _ => Ok();
-
-        protected static Result<T, TError> TryCreate<TError>(
-            TValue value,
-            Func<TValue, T> creator,
-            Func<TValue, Result<Unit, TError>>? validator = null) =>
-            (validator ?? NoValidation<TError>())(value).Map<Unit, T, TError>(r => creator(value));
-    }
+    protected static Result<T, TError> TryCreate<TError>(
+        TValue value,
+        Func<TValue, T> creator,
+        Func<TValue, Result<TValue, TError>>? validator = null) =>
+        (validator ?? NoValidation<TError>())(value).Map(creator);
 }

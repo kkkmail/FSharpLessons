@@ -1,6 +1,5 @@
-﻿namespace CSharp.Lessons.Primitives
+﻿namespace CSharp.Lessons.Primitives;
+
+public record ErrorData(string ErrorMessage)
 {
-    public record ErrorData
-    {
-    }
 }

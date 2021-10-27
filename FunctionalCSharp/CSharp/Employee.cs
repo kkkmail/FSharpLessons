@@ -1,8 +1,6 @@
-﻿namespace CSharp
-{
-    public record Employee
-    (
-        string Name,
-        double Income
-    );
-}
+﻿namespace CSharp;
+public record Employee
+(
+    string Name,
+    double Income
+);

@@ -6,7 +6,7 @@ public abstract record SetBase<TSetElement, TValue, TError>
 {
     public TValue Value { get; }
     protected SetBase(TValue value) => Value = value;
-    public static Func<TValue, Result<TValue, TError>> NoValidation() => v => Ok(v);
+    public static Func<TValue, Result<TValue, TError>> NoValidation { get; } = v => Ok(v);
 
     private static Func<TValue, Result<TValue, TError>> CanNotBeNull(Func<TValue, TError> errorCreator) =>
         v => v.CanNotBeNull() ? Ok(v) : errorCreator(v);
@@ -16,5 +16,5 @@ public abstract record SetBase<TSetElement, TValue, TError>
         Func<TValue, TSetElement> creator,
         Func<TValue, TError> errorCreator,
         Func<TValue, Result<TValue, TError>>? extraValidator = null) =>
-        CanNotBeNull(errorCreator).Compose(r => r.Bind(extraValidator ?? NoValidation()))(value).Map(creator);
+        CanNotBeNull(errorCreator).Compose(r => r.Bind(extraValidator ?? NoValidation))(value).Map(creator);
 }

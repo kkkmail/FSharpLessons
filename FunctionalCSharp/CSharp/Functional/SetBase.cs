@@ -7,6 +7,7 @@ public abstract record SetBase<TSetElement, TValue, TError>
     public TValue Value { get; }
     protected SetBase(TValue value) => Value = value;
     public static Func<TValue, Result<TValue, TError>> NoValidation { get; } = v => Ok(v);
+    public string ClassName => GetType().Name;
 
     private static Func<TValue, Result<TValue, TError>> CanNotBeNull(Func<TValue, TError> errorCreator) =>
         v => v.CanNotBeNull() ? Ok(v) : errorCreator(v);

@@ -5,4 +5,6 @@
 /// </summary>
 public record ErrorData(string ErrorMessage)
 {
+    public static ErrorData GetValueCannotBeNull(string className) =>
+        new ErrorData($"Value of {className} cannot be null.");
 }

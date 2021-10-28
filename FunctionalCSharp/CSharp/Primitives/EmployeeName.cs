@@ -6,6 +6,9 @@ public record EmployeeName : OpenSetBase<EmployeeName, string, ErrorData>
     {
     }
 
+    public static Func<string, string> Standardizer { get; } =
+        s => s.ToUpper().Trim();
+
     public static Func<string, Result<string, ErrorData>> Validator { get; } =
         v => Ok(v.ToUpper().Trim());
 
@@ -14,7 +17,7 @@ public record EmployeeName : OpenSetBase<EmployeeName, string, ErrorData>
         Func<string, Result<string, ErrorData>>? validator = null) =>
         TryCreate(
             name,
-            n => new EmployeeName(n),
+            Standardizer.Compose(n => new EmployeeName(n)),
             n => new ErrorData($"The value is wrong: '{n}'."),
             Validator.Compose(r => r.Bind(validator ?? NoValidation)));
 }

@@ -10,7 +10,7 @@ public record EmployeeName : OpenSetBase<EmployeeName, string, ErrorData>
         s => s.ToUpper().Trim();
 
     public static Func<string, Result<string, ErrorData>> Validator { get; } =
-        v => Ok(v);
+        v => v;
 
     public static Result<EmployeeName, ErrorData> TryCreate(
         string name,

@@ -19,10 +19,10 @@ public abstract record EmailBase<T> : OpenSetBase<T, string, ErrorData>, IEmail
     {
     }
 
-    public static Func<string, string> Standardizer { get; } =
+    private static Func<string, string> Standardizer { get; } =
         s => s.ToLower().Trim();
 
-    protected static Func<string, Result<string, ErrorData>> Validator { get; } =
+    private static Func<string, Result<string, ErrorData>> Validator { get; } =
         new EmailValidator().Validate;
 
     protected static Result<T, ErrorData> TryCreate(

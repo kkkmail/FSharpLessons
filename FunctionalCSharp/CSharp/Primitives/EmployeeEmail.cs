@@ -10,11 +10,14 @@ public record EmployeeEmail : EmailBase<EmployeeEmail>
 
     public static Func<string, Result<string, ErrorData>> EmployeeEmailValidator { get; } =
         v => v.ToLower().Trim().EndsWith(CorporateDomain)
-            ? Ok(v)
+            ? v
             : new ErrorData("Employee email must end with corporate domain name.");
 
     public static Result<EmployeeEmail, ErrorData> TryCreate(
         string email,
         Func<string, Result<string, ErrorData>>? extraValidator = null) =>
-        TryCreate(email, e => new EmployeeEmail(e), extraValidator);
+        TryCreate(
+            email,
+            e => new EmployeeEmail(e),
+            EmployeeEmailValidator.Compose(r => r.Bind(extraValidator ?? NoValidation)));
 }

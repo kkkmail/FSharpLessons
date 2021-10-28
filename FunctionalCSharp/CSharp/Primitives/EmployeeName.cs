@@ -10,7 +10,7 @@ public record EmployeeName : OpenSetBase<EmployeeName, string, ErrorData>
         s => s.ToUpper().Trim();
 
     public static Func<string, Result<string, ErrorData>> Validator { get; } =
-        v => Ok(v.ToUpper().Trim());
+        v => Ok(v);
 
     public static Result<EmployeeName, ErrorData> TryCreate(
         string name,
@@ -18,6 +18,6 @@ public record EmployeeName : OpenSetBase<EmployeeName, string, ErrorData>
         TryCreate(
             name,
             Standardizer.Compose(n => new EmployeeName(n)),
-            n => new ErrorData($"The value is wrong: '{n}'."),
+            _ => ErrorData.ValueCannotBeNull<string>(nameof(EmployeeName)),
             Validator.Compose(r => r.Bind(validator ?? NoValidation)));
 }

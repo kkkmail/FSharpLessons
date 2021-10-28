@@ -16,8 +16,8 @@ public record struct Result<TResult, TError>
     internal TResult Ok { get; }
     internal TError Error { get; }
 
-    private bool IsOk { get; }
-    private bool IsError => !IsOk;
+    public bool IsOk { get; }
+    public bool IsError => !IsOk;
 
     internal Result(TResult result)
     {

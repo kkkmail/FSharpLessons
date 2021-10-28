@@ -1,28 +1,55 @@
 ﻿namespace CSharp.Lessons.Functional.Validation;
 
-public abstract record AggregateValidationRule<T, TValue, TError> : ValidationRule<T, TValue, TError>
-    where T : SetBase<T, TValue, TError>
+public abstract record AggregateValidationRule<TValue, TError> : IValidationRule<TValue, TError>
     where TValue : IComparable<TValue>
 {
-    private ImmutableList<TRule> NonAggregatableRules { get; }
-    private ImmutableList<TRule> AggregatableRules { get; }
+    private ImmutableList<IValidationRule<TValue, TError>> NonAggregatableRules { get; }
+    private ImmutableList<IValidationRule<TValue, TError>> AggregatableRules { get; }
     private Func<TError, TError, TError> CombineErrors { get; }
+    public bool CanAggregate { get; }
 
     public AggregateValidationRule(
-        IEnumerable<TRule> rules,
-        Func<TError, TError, TError> combineErrors) : base(
-            IsValid: null!,
-            GetError: null!,
-            false)
+        IEnumerable<IValidationRule<TValue, TError>> rules,
+        Func<TError, TError, TError> combineErrors,
+        bool failOnFirst = false)
     {
-        var (t, f) = rules.Partition(e => e.CanAggregate);
-        AggregatableRules = t.ToImmutableList();
-        NonAggregatableRules = f.ToImmutableList();
+        CanAggregate = !failOnFirst;
+
+        if (failOnFirst)
+        {
+            AggregatableRules = ImmutableList<IValidationRule<TValue, TError>>.Empty;
+            NonAggregatableRules = rules.ToImmutableList();
+        }
+        else
+        {
+            var (t, f) = rules.Partition(e => e.CanAggregate);
+            AggregatableRules = t.ToImmutableList();
+            NonAggregatableRules = f.ToImmutableList();
+        }
+
         CombineErrors = combineErrors;
     }
 
-    public Result<T, TError> Validate(T value, bool failOnFirst = false)
+    public Result<TValue, TError> Validate(TValue value)
     {
-        return default;
+        foreach (var rule in NonAggregatableRules)
+        {
+            var result = rule.Validate(value);
+            if (result.IsError) return result;
+        }
+
+        var failedRules = AggregatableRules
+            .Select(e => e.Validate(value))
+            .Where(e => e.IsError)
+            .Select(e => e.Error)
+            .ToList();
+
+        if (failedRules.Count > 0)
+        {
+            var result = failedRules.Aggregate((e, a) => CombineErrors(e, a));
+            return result;
+        }
+
+        return Ok(value);
     }
 }

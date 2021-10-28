@@ -15,6 +15,6 @@ public record EmployeeName : OpenSetBase<EmployeeName, string, ErrorData>
         TryCreate(
             name,
             n => new EmployeeName(n),
-            n => null,
+            n => new ErrorData($"The value is wrong: '{n}'."),
             Validator.Compose(r => r.Bind(validator ?? NoValidation())));
 }

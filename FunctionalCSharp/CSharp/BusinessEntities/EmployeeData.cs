@@ -2,4 +2,4 @@
 
 public record EmployeeData(
     EmployeeDataType EmployeeDataType,
-    string EmploeeDataValue);
+    Option<string> EmploeeDataValue);

@@ -4,8 +4,8 @@ public record Employee(
     EmployeeId EmployeeId,
     EmployeeName EmployeeName,
     EmployeeEmail EmployeeEmail,
-    EmployeeId ManagedBy,
+    Option<EmployeeId> ManagedBy,
     DateTime DateHired,
     decimal Salary,
-    string Description,
+    Option<string> Description,
     ImmutableDictionary<EmployeeDataType, EmployeeData> Data);

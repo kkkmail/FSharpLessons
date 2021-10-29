@@ -1,5 +1,5 @@
 ﻿// This looks ugly.
-// Unfortunately C# 10 requires fullly qualified names here and cannot use already known namespaces.
+// Unfortunately C# 10 requires fully qualified names here and cannot use already known namespaces.
 using EmployeeResult = CSharp.Lessons.Functional.Result<CSharp.Lessons.BusinessEntities.Employee, CSharp.Lessons.Primitives.ErrorData>;
 
 namespace CSharp.Lessons.DbData;

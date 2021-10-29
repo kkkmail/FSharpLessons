@@ -4,7 +4,7 @@ namespace CSharp.Lessons.DbData;
 
 public class DatabaseContext : DbContext
 {
-    private const string ConnectionString = "Data Source=localhost;Initial Catalog=Example;Integrated Security=SSPI";
+    private static ConnectionString ConnectionString => ConnectionString.DefaultValue;
 
     public DbSet<EFEmployee> EmployeeSet { get; set; } = null!;
     public DbSet<EFEmployeeData> EmployeeDataSet { get; set; } = null!;
@@ -15,7 +15,11 @@ public class DatabaseContext : DbContext
             .UseSqlServer(connectionString)
             .Options;
 
-    public DatabaseContext() : base(GetDbContextOptions(ConnectionString))
+    public DatabaseContext() : base(GetDbContextOptions(ConnectionString.Value))
+    {
+    }
+
+    public DatabaseContext(ConnectionString connectionString) : base(GetDbContextOptions(connectionString.Value))
     {
     }
 }

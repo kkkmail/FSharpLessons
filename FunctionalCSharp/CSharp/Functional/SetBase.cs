@@ -1,4 +1,6 @@
-﻿namespace CSharp.Lessons.Functional;
+﻿using System.Reflection;
+
+namespace CSharp.Lessons.Functional;
 
 public abstract record SetBase<TSetElement, TValue, TError>
     where TSetElement : SetBase<TSetElement, TValue, TError>
@@ -18,4 +20,19 @@ public abstract record SetBase<TSetElement, TValue, TError>
         Func<TValue, TError> errorCreator,
         Func<TValue, Result<TValue, TError>>? extraValidator = null) =>
         CanNotBeNull(errorCreator).Compose(r => r.Bind(extraValidator ?? NoValidation))(value).Map(creator);
+
+    protected static ImmutableList<TSetElement> GetAllValuesImpl(Type? t = null)
+    {
+        t ??= typeof(TSetElement);
+        var values = t.GetNestedTypes(BindingFlags.Public | BindingFlags.Static)
+            .SelectMany(GetAllValuesImpl)
+            .Concat(t.GetProperties(BindingFlags.Public | BindingFlags.Static)
+                .Where(x => x.PropertyType == typeof(TSetElement))
+                .Select(x => x.GetValue(null) as TSetElement)
+                .Where(x => x! != null!))
+            .Distinct()
+            .ToImmutableList();
+
+        return values!;
+    }
 }

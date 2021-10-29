@@ -14,5 +14,5 @@ public class EFEmployeeData
     public long EmployeeDataTypeId { get; set; }
 
     [MaxLength]
-    public string EmployeeDataValue { get; set; } = null!;
+    public string? EmployeeDataValue { get; set; }
 }

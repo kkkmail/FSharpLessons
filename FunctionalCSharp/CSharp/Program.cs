@@ -2,6 +2,8 @@
 global using System.Linq;
 global using MoreLinq.Extensions;
 global using System.Collections.Immutable;
+global using System.Runtime.CompilerServices;
+
 global using CSharp.Lessons;
 global using CSharp.Lessons.Functional;
 global using CSharp.Lessons.Functional.Validation;

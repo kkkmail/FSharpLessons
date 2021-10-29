@@ -1,4 +1,4 @@
-﻿namespace CSharp.Lessons;
+﻿namespace CSharp.Lessons.BusinessEntities;
 
 public record IncomeRaiseByPct : IncomeRaiseBase
 {

@@ -11,6 +11,7 @@ global using CSharp.Lessons.Primitives.Validators;
 global using Unit = System.ValueTuple;
 global using static CSharp.Lessons.Functional.F;
 global using FluentAssertions;
+global using System.Threading.Tasks;
 
 namespace CSharpTests
 {

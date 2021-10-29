@@ -5,7 +5,7 @@
         [Fact]
         void ZeroValueCanCreate()
         {
-            var result = new EmpoloyeeId(0);
+            var result = new EmployeeId(0);
             result.Should().NotBeNull();
         }
     }

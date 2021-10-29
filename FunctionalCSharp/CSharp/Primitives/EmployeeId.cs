@@ -1,11 +1,11 @@
 ﻿namespace CSharp.Lessons.Primitives;
 
-public record EmpoloyeeId : OpenSetBase<EmpoloyeeId, long, ErrorData>
+public record EmployeeId : OpenSetBase<EmployeeId, long, ErrorData>
 {
     /// <summary>
     /// Any values are allowed.
     /// </summary>
-    public EmpoloyeeId(long value) : base(value)
+    public EmployeeId(long value) : base(value)
     {
     }
 }

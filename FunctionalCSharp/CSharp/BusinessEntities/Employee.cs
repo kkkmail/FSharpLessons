@@ -1,4 +1,5 @@
-﻿namespace CSharp;
+﻿namespace CSharp.Lessons.BusinessEntities;
+
 public record Employee
 (
     string Name,

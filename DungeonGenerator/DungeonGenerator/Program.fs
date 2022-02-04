@@ -5,10 +5,22 @@ open DungeonGenerator.Primitives
 open System.Drawing
 open System.Windows.Forms
 
-let rnd = Random()
-let noOfRooms = 200
+let rnd1 = Random(1)
+let rnd2 = Random(1)
 
-let dungeon = Dungeon.create rnd.Next DoorType.Left
+let p =
+    {
+        minOpenedDoors = 2
+        maxOpenedDoors = 3
+        minDoorThreshold = 0.85
+        openInvalid = false
+        nextInt = rnd1.Next
+        nextDouble = rnd2.NextDouble
+    }
+
+let noOfRooms = 400
+
+let dungeon = Dungeon.create 2 DoorType.Left p
 
 let steps = [ for i in 1..noOfRooms -> i ]
 
@@ -44,7 +56,7 @@ printfn "End."
 //exercise.Paint.Add exercisePaint
 //do Application.Run exercise
 
-let xZero = 1000
+let xZero = 1500
 let yZero = 800
 let sizeX = 40
 let sizeY = 40

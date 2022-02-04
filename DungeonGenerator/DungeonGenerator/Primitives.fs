@@ -2,15 +2,13 @@
 
 module Primitives =
 
-    let maxOpenedDoors = 2
-
     type Coordinates =
         {
             x : int
             y : int
         }
 
-        static member defUltValue =
+        static member defaultValue =
             {
                 x = 0
                 y = 0
@@ -57,14 +55,16 @@ module Primitives =
     type Room =
         {
             roomNumber : int
+            maxOpenedDoors : int
             closedDoors : Set<DoorType>
             openedDoors : Set<DoorType>
             invalidDoors : Set<DoorType> // Doors that cannot be used - they are closed and cannot be opened.
         }
 
-        static member defaultValue n =
+        static member defaultValue n m =
             {
                 roomNumber = n
+                maxOpenedDoors = m
                 closedDoors = DoorType.all
                 openedDoors = Set.empty
                 invalidDoors = Set.empty
@@ -82,8 +82,9 @@ module Primitives =
 
         member r.closedCount = r.closedDoors.Count
         member r.openedCount = r.openedDoors.Count
+        member r.invalidCount = r.invalidDoors.Count
 
-        member r.limitOpened() =
+        member r.limitOpened maxOpenedDoors =
             if r.openedCount < maxOpenedDoors
             then r
             else { r with invalidDoors = r.invalidDoors |> Set.union r.closedDoors; closedDoors = Set.empty }
@@ -104,7 +105,6 @@ module Primitives =
                 if d >= h.room.closedCount
                 then inner t (d - h.room.closedCount)
                 else
-//                    printfn $"d = {d}, closed doors = {h.room.closedDoors}."
 
                     {
                         coordinates = h.coordinates
@@ -112,27 +112,60 @@ module Primitives =
                     }
                     |> Some
 
-//        printfn $"doorNumber = {doorNumber}."
         let a = rooms |> Seq.toList |> List.map (fun e -> { coordinates = e.Key; room = e.Value })
         inner a doorNumber
 
 
+    let tryFindInvalidDoorToOpen (rooms : Map<Coordinates, Room>) (doorNumber : int) : DoorToOpen option =
+        let rec inner (remaining : List<RoomOnMap>) d =
+            match remaining with
+            | [] -> None
+            | h :: t ->
+                if d >= h.room.invalidCount
+                then inner t (d - h.room.invalidCount)
+                else
+
+                    {
+                        coordinates = h.coordinates
+                        doorType = (h.room.invalidDoors |> Set.toList).[d]
+                    }
+                    |> Some
+
+        let a = rooms |> Seq.toList |> List.map (fun e -> { coordinates = e.Key; room = e.Value })
+        inner a doorNumber
+
+    type DungeonGenerationParam =
+        {
+            minOpenedDoors : int
+            maxOpenedDoors : int
+            minDoorThreshold : double
+            openInvalid : bool
+            nextInt : int -> int
+            nextDouble : unit -> double
+        }
+
+    let getMaxOpenedDoors (p : DungeonGenerationParam) =
+        if p.nextDouble() <= p.minDoorThreshold
+        then p.minOpenedDoors
+        else p.maxOpenedDoors
+
     type Dungeon =
         {
             rooms : Map<Coordinates, Room>
-            nextInt : int -> int
+            generationParams : DungeonGenerationParam
         }
 
         member d.tryAddRoom () =
+            let p = d.generationParams
+
             let allClosed =
                 d.rooms
                 |> Seq.map (fun e -> e.Value.closedCount)
                 |> Seq.sum
 
-            let doorNumberToOpen = d.nextInt (allClosed + 1)
+            let doorNumberToOpen = p.nextInt (allClosed + 1)
 
-            match tryFindDoorToOpen d.rooms doorNumberToOpen with
-            | Some v ->
+            let g v =
                 let nextRoomCoordinates = v.doorType.nextRoom v.coordinates
 
                 match d.rooms |> Map.tryFind v.coordinates with
@@ -145,20 +178,45 @@ module Primitives =
                             printfn $"Unable to invalidate door type: {v.doorType} in the room with coordinates {nextRoomCoordinates}. Room: {r}."
                             d
                     | None ->
-                        let r = Room.defaultValue d.rooms.Count
+                        let m = getMaxOpenedDoors p
+                        let r = Room.defaultValue d.rooms.Count m
 
                         match r0.tryOpen v.doorType, r.tryOpen v.doorType.reverse with
                         | Some x0, Some x1 ->
-                            { d with rooms = d.rooms |> Map.add v.coordinates (x0.limitOpened()) |> Map.add nextRoomCoordinates (x1.limitOpened()) }
+                            {
+                                d with
+                                    rooms =
+                                        d.rooms
+                                        |> Map.add v.coordinates (x0.limitOpened x0.maxOpenedDoors)
+                                        |> Map.add nextRoomCoordinates (x1.limitOpened x1.maxOpenedDoors)
+                            }
                         | _ ->
                             printfn $"Something is wrong. Coordinates: {v.coordinates}, room: {r0}, door type: {v.doorType}."
                             d
                 | None ->
                     printfn $"Unable to find room with coordinates {v.coordinates} in the dungeon."
                     d
+
+            match tryFindDoorToOpen d.rooms doorNumberToOpen with
+            | Some v -> g v
             | None ->
-                printfn "Unable to find door to open."
-                d
+                printfn "Unable to find closed door to open."
+                if d.generationParams.openInvalid
+                then
+                    let allInvalid =
+                        d.rooms
+                        |> Seq.map (fun e -> e.Value.invalidCount)
+                        |> Seq.sum
+
+                    let invalidDoorNumberToOpen = p.nextInt (allInvalid + 1)
+
+                    match tryFindInvalidDoorToOpen d.rooms invalidDoorNumberToOpen with
+                    | Some v -> g v
+                    | None ->
+                        printfn $"Unable to find invalid room to open."
+                        d
+                else d
+
 
         member d.toList() =
             d.rooms
@@ -166,10 +224,10 @@ module Primitives =
             |> List.map (fun e -> { coordinates = e.Key; room = e.Value })
             |> List.sortBy (fun e -> e.room.roomNumber)
 
-        static member create nextInt dt =
-            let r = Room.defaultValue 0
+        static member create m dt p =
+            let r = Room.defaultValue 0 m
 
             {
-                rooms = [ (Coordinates.defUltValue, { r with openedDoors = r.openedDoors |> Set.add dt; closedDoors = r.closedDoors |> Set.remove dt }) ] |> Map.ofList
-                nextInt = nextInt
+                rooms = [ (Coordinates.defaultValue, { r with openedDoors = r.openedDoors |> Set.add dt; closedDoors = r.closedDoors |> Set.remove dt }) ] |> Map.ofList
+                generationParams = p
             }

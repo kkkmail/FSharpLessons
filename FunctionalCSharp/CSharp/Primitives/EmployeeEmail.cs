@@ -6,8 +6,19 @@ public record EmployeeEmail : EmailBase<EmployeeEmail>
     {
     }
 
+    //private const string CorporateDomain = "@abcdef.gg";
+    private const string CorporateDomain = "@nowhere.gg";
+
+    public static Func<string, Result<string, ErrorData>> EmployeeEmailValidator { get; } =
+        v => v.ToLower().Trim().EndsWith(CorporateDomain)
+            ? v
+            : new ErrorData("Employee email must end with corporate domain name.");
+
     public static Result<EmployeeEmail, ErrorData> TryCreate(
         string email,
-        Func<string, Result<string, ErrorData>>? validator = null) =>
-        TryCreate(email, e => new EmployeeEmail(e), validator);
+        Func<string, Result<string, ErrorData>>? extraValidator = null) =>
+        TryCreate(
+            email,
+            e => new EmployeeEmail(e),
+            EmployeeEmailValidator.Compose(r => r.Bind(extraValidator ?? NoValidation)));
 }

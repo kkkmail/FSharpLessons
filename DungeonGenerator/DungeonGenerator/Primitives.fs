@@ -152,6 +152,12 @@ module Primitives =
                 printfn "Unable to find door to open."
                 d
 
+        member d.toList() =
+            d.rooms
+            |> Seq.toList
+            |> List.map (fun e -> { coordinates = e.Key; room = e.Value })
+            |> List.sortBy (fun e -> e.room.roomNumber)
+
         static member create nextInt dt =
             let r = Room.defaultValue 0
 

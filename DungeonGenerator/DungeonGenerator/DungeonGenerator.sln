@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "DungeonGenerator", "DungeonGenerator.fsproj", "{F6C10147-EFDE-4301-B0D3-EEC911B4545C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsApp1", "..\WinFormsApp1\WinFormsApp1.csproj", "{0F8E549B-FAAA-42EA-8E45-6D8A7C66976E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{F6C10147-EFDE-4301-B0D3-EEC911B4545C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6C10147-EFDE-4301-B0D3-EEC911B4545C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F6C10147-EFDE-4301-B0D3-EEC911B4545C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F8E549B-FAAA-42EA-8E45-6D8A7C66976E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F8E549B-FAAA-42EA-8E45-6D8A7C66976E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F8E549B-FAAA-42EA-8E45-6D8A7C66976E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F8E549B-FAAA-42EA-8E45-6D8A7C66976E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

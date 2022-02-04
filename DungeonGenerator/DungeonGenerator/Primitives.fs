@@ -2,6 +2,8 @@
 
 module Primitives =
 
+    let maxOpenedDoors = 2
+
     type Coordinates =
         {
             x : int
@@ -81,6 +83,11 @@ module Primitives =
         member r.closedCount = r.closedDoors.Count
         member r.openedCount = r.openedDoors.Count
 
+        member r.limitOpened() =
+            if r.openedCount < maxOpenedDoors
+            then r
+            else { r with invalidDoors = r.invalidDoors |> Set.union r.closedDoors; closedDoors = Set.empty }
+
 
     type RoomOnMap =
         {
@@ -141,7 +148,8 @@ module Primitives =
                         let r = Room.defaultValue d.rooms.Count
 
                         match r0.tryOpen v.doorType, r.tryOpen v.doorType.reverse with
-                        | Some x0, Some x1 -> { d with rooms = d.rooms |> Map.add v.coordinates x0 |> Map.add nextRoomCoordinates x1 }
+                        | Some x0, Some x1 ->
+                            { d with rooms = d.rooms |> Map.add v.coordinates (x0.limitOpened()) |> Map.add nextRoomCoordinates (x1.limitOpened()) }
                         | _ ->
                             printfn $"Something is wrong. Coordinates: {v.coordinates}, room: {r0}, door type: {v.doorType}."
                             d

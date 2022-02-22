@@ -1,6 +1,17 @@
 ﻿namespace DungeonGenerator
 
 module Primitives =
+    
+//    type ArrayMap<'K, 'V when 'K : comparison and 'V : comparison > =
+//        {
+//            array : array<'K * 'V>
+//            map : Map<'K, 'V>
+//        }
+//        
+//        member am.add k v =
+//            if am.array.Length > am.map.Count
+//            then { am with array = am.} 
+        
 
     type Coordinates =
         {

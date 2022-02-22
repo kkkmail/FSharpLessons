@@ -6,22 +6,22 @@ open System.Drawing
 open System.Windows.Forms
 
 let rnd1 = Random(2)
-let rnd2 = Random(1)
+let rnd2 = Random(2)
 
 let p =
     {
         minOpenedDoors = 2
         maxOpenedDoors = 3
         minDoorThreshold = 0.93
-        openInvalid = false
+        openInvalid = true
         nextInt = rnd1.Next
         nextDouble = rnd2.NextDouble
     }
 
-let noOfRooms = 400
+let noOfRooms = 600
 
 let xZero = 1500
-let yZero = 1000
+let yZero = 1300
 let sizeX = 40
 let sizeY = 40
 let delta = 5

@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33122.133
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Primes", "Primes.fsproj", "{47957457-FDA4-4F31-8BB2-0031C7DF039C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{47957457-FDA4-4F31-8BB2-0031C7DF039C}.Debug|x64.ActiveCfg = Release|x64
+		{47957457-FDA4-4F31-8BB2-0031C7DF039C}.Debug|x64.Build.0 = Release|x64
+		{47957457-FDA4-4F31-8BB2-0031C7DF039C}.Release|x64.ActiveCfg = Release|x64
+		{47957457-FDA4-4F31-8BB2-0031C7DF039C}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {124F448A-2884-4B3D-A77F-C957DD5844A5}
+	EndGlobalSection
+EndGlobal

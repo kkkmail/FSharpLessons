@@ -2,6 +2,7 @@
 
 open Open.Numeric.Primes
 open System.Linq
+open System.Diagnostics
 open FSharp.Collections.ParallelSeq
 
 module PrimeSolver =
@@ -19,9 +20,10 @@ module PrimeSolver =
     let getBest p primes numbers =
         let r =
             numbers
-            |> List.map (fun ae -> (ae, primes |> List.map (fun pe -> pe + ae) |> List.filter (fun (e : uint64) -> Number.IsPrime(e)) |> Set.ofList))
-            |> List.sortBy (fun (_, b) -> - b.Count)
-            |> List.take p.takeNumber
+            |> PSeq.map (fun ae -> (ae, primes |> List.map (fun pe -> pe + ae) |> List.filter (fun (e : uint64) -> Number.IsPrime(e)) |> Set.ofList))
+            |> Seq.sortBy (fun (_, b) -> - b.Count)
+            |> Seq.take p.takeNumber
+            |> List.ofSeq
 
         r
 
@@ -40,11 +42,12 @@ module PrimeSolver =
                 else
                     let r =
                         b
-                        |> List.map (fun (be, qe) -> a |> List.map (fun (ae, pe) -> (if be |> List.contains ae then [] else ae :: be |> List.sort), (pe, qe) ||> Set.intersect))
-                        |> List.concat
-                        |> List.filter (fun (a, _) -> a.Length > 0)
-                        |> List.sortBy (fun (_, b) -> - b.Count)
-                        |> List.take p.takeNumber
+                        |> PSeq.map (fun (be, qe) -> a |> List.map (fun (ae, pe) -> (if be |> List.contains ae then [] else ae :: be |> List.sort), (pe, qe) ||> Set.intersect))
+                        |> Seq.concat
+                        |> Seq.filter (fun (a, _) -> a.Length > 0)
+                        |> Seq.sortBy (fun (_, b) -> - b.Count)
+                        |> Seq.take p.takeNumber
+                        |> List.ofSeq
 
                     match r with
                     | [] ->
@@ -68,6 +71,7 @@ module PrimeSolver =
 
 
     let solve p =
+        let sw = Stopwatch.StartNew()
         let primes = Prime.Numbers.Take(p.numberOfPrimes) |> Seq.toList
         let numbers = [ for i in 1..p.numberCount -> uint64 (i * p.gcd)]
         let best = getBest p primes numbers
@@ -79,6 +83,8 @@ module PrimeSolver =
             steps
             |> List.fold (fun acc e -> makeStep p best acc e) startBest
             |> List.tryHead
+
+        printfn $"Took: {sw.Elapsed.Seconds} seconds."
 
         match result with
         | Some r -> printResult r

@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Compile Include="PrimeSolver.fs" />
+    <Compile Include="PrimeSolver2.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

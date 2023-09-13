@@ -119,7 +119,7 @@ module Primitives =
 
                     {
                         coordinates = h.coordinates
-                        doorType = (h.room.closedDoors |> Set.toList).[d]
+                        doorType = (h.room.closedDoors |> Set.toList |> List.sortBy (fun e -> e.value)).[d]
                     }
                     |> Some
 
@@ -138,7 +138,7 @@ module Primitives =
 
                     {
                         coordinates = h.coordinates
-                        doorType = (h.room.invalidDoors |> Set.toList).[d]
+                        doorType = (h.room.invalidDoors |> Set.toList |> List.sortBy (fun e -> e.value)).[d]
                     }
                     |> Some
 
@@ -156,7 +156,9 @@ module Primitives =
         }
 
     let getMaxOpenedDoors (p : DungeonGenerationParam) =
-        if p.nextDouble() <= p.minDoorThreshold
+        let nextDouble = p.nextDouble()
+
+        if nextDouble <= p.minDoorThreshold
         then p.minOpenedDoors
         else p.maxOpenedDoors
 

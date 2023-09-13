@@ -8,14 +8,27 @@ open System.Windows.Forms
 let rnd1 = Random(2)
 let rnd2 = Random(2)
 
+let mutable doubleCnt = 0
+let mutable intCnt = 0
+
+let nextDouble() =
+    doubleCnt <- doubleCnt + 1
+    rnd2.NextDouble()
+
+
+let nextInt maxValue =
+    intCnt <- intCnt + 1
+    rnd1.Next maxValue
+
+
 let p =
     {
         minOpenedDoors = 2
         maxOpenedDoors = 3
         minDoorThreshold = 0.93
         openInvalid = true
-        nextInt = rnd1.Next
-        nextDouble = rnd2.NextDouble
+        nextInt = nextInt
+        nextDouble = nextDouble
     }
 
 let noOfRooms = 600
@@ -34,6 +47,11 @@ let steps = [ for i in 1..noOfRooms -> i ]
 let makeStep i (d : Dungeon) =
     printfn "\n\n========================================================"
     printfn $"Making step # {i}."
+
+    if i >= (noOfRooms - 5) && i <= noOfRooms
+    then
+        printfn ""
+
     let d1 = d.tryAddRoom()
 
     d1.toList()
@@ -44,6 +62,9 @@ let makeStep i (d : Dungeon) =
 
 
 printfn "Starting..."
+let rnd = new Random 2
+
+let numbers = [ for i in 0..79 -> (i, rnd.NextDouble()) ]
 
 let fullDungeon =
     steps
